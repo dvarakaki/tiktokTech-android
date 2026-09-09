@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tela do Desafio Self: tirar/escolher uma foto, enviar para o Cloudinary
+    e mostrar a URL retornada. Visual inspirado no GitHub (cartões com borda
+    fina, cantos discretos, tipografia neutra e caixa de status monoespaçada).
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fundo"
+    android:clipToPadding="false"
+    android:padding="16dp"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/titulo_tela"
+            android:textColor="@color/texto_forte"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/self_intro"
+            android:textColor="@color/texto_medio"
+            android:textSize="13sp" />
+
+        <!-- Cartão da foto -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.TikTokTech.Card"
+            android:layout_width="match_parent"
+            android:layout_height="280dp">
+
+            <ImageView
+                android:id="@+id/imgFoto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/placeholder_imagem"
+                android:contentDescription="@string/desc_foto"
+                android:padding="24dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_imagem_vazia" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Botões de captura -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTirarFoto"
+                style="@style/Widget.TikTokTech.Botao.Azul"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:text="@string/btn_tirar_foto" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGaleria"
+                style="@style/Widget.TikTokTech.Botao.Secundario"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:text="@string/self_gallery" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEnviar"
+            style="@style/Widget.TikTokTech.Botao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:enabled="false"
+            android:text="@string/btn_enviar" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="14dp"
+            android:indeterminateTint="@color/ambar"
+            android:visibility="gone" />
+
+        <TextView
+            style="@style/Texto.Rotulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Status" />
+
+        <!-- Caixa estilo "code block" com o status/URL -->
+        <TextView
+            android:id="@+id/txtStatus"
+            style="@style/Texto.Codigo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:autoLink="web"
+            android:background="@drawable/fundo_codigo"
+            android:maxLines="5"
+            android:padding="12dp"
+            android:scrollbars="vertical"
+            android:text="@string/status_inicial"
+            android:textColorLink="@color/ambar" />
+
+    </LinearLayout>
+
+</ScrollView>

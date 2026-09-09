@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Identidade do app (paleta inspirada no GitHub) -->
+    <color name="marinho">#FF24292F</color>
+    <color name="marinho_claro">#FF32383F</color>
+    <color name="ambar">#FF0969DA</color>
+    <color name="ambar_escuro">#FF0550AE</color>
+    <color name="coral">#FFCF222E</color>
+    <color name="verde_github">#FF1A7F37</color>
+
+    <!-- Superfícies e texto (tema claro) -->
+    <color name="fundo">#FFF6F8FA</color>
+    <color name="superficie">#FFFFFFFF</color>
+    <color name="superficie_fraca">#FFF6F8FA</color>
+    <color name="texto_forte">#FF1F2328</color>
+    <color name="texto_medio">#FF656D76</color>
+    <color name="texto_fraco">#FF8C959F</color>
+    <color name="divisor">#FFD0D7DE</color>
+    <color name="placeholder_imagem">#FFF6F8FA</color>
+</resources>

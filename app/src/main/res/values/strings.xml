@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TikTokTech</string>
+    <string name="titulo_comentarios">Comentários</string>
+
+    <!-- ==========================================================
+         PREENCHA COM OS SEUS DADOS DO CLOUDINARY (veja o README)
+         ========================================================== -->
+    <string name="cloudinary_cloud_name">dikitk54o</string>
+    <string name="cloudinary_upload_preset">Tiktoktech</string>
+
+    <!-- Feed -->
+    <string name="feed_vazio">Nenhuma publicação ainda.\nToque na câmera para começar.</string>
+    <string name="acao_nova_foto">Nova foto</string>
+    <string name="desc_foto_publicacao">Foto da publicação</string>
+    <string name="acao_like">Curtir</string>
+    <string name="acao_dislike">Não curtir</string>
+    <string name="acao_comentar">Comentar</string>
+    <string name="acao_voltar">Voltar</string>
+
+    <!-- Nova publicação -->
+    <string name="titulo_nova_publicacao">Nova publicação</string>
+    <string name="hint_legenda">Escreva uma legenda…</string>
+    <string name="acao_publicar">Publicar</string>
+    <string name="acao_cancelar">Cancelar</string>
+
+    <!-- Comentários -->
+    <string name="sem_comentarios">Seja o primeiro a comentar.</string>
+    <string name="hint_seu_nome">Seu nome</string>
+    <string name="hint_comentario">Escreva um comentário…</string>
+    <string name="autor_anonimo">Anônimo</string>
+
+    <!-- Mensagens -->
+    <string name="msg_captura_cancelada">Captura cancelada.</string>
+    <string name="msg_sem_foto">Tire uma foto primeiro.</string>
+    <string name="msg_publicado">Publicado!</string>
+    <string name="msg_comentario_vazio">Escreva um comentário.</string>
+    <string name="msg_post_invalido">Publicação não encontrada.</string>
+    <string name="msg_erro_upload">Erro ao enviar a imagem: %1$s</string>
+    <string name="msg_erro_salvar">Erro ao salvar: %1$s</string>
+    <string name="msg_erro_feed">Erro ao carregar o feed: %1$s</string>
+    <string name="msg_erro_voto">Erro ao registrar o voto: %1$s</string>
+    <string name="msg_erro_comentario">Erro ao comentar: %1$s</string>
+    <string name="self_title">Desafio Self</string>
+    <string name="self_intro">Sua foto na nuvem. Tire uma foto ou escolha uma imagem da galeria.</string>
+    <string name="self_preview">Prévia da foto selecionada</string>
+    <string name="self_camera">Tirar foto</string>
+    <string name="self_gallery">Galeria</string>
+    <string name="self_class">Turma</string>
+    <string name="self_send">Enviar foto</string>
+    <string name="self_copy">Copiar URL</string>
+    <string name="self_open">Abrir no navegador</string>
+    <string name="titulo_tela">Hora da FOTO · Turma D</string>
+    <string name="btn_tirar_foto">Tirar foto</string>
+    <string name="btn_enviar">Enviar para o Cloudinary</string>
+    <string name="desc_foto">Foto capturada</string>
+    <string name="status_inicial">Nenhuma foto ainda.</string>
+    <string name="status_foto_ok">Foto capturada. Toque em enviar.</string>
+    <string name="status_foto_cancelada">Captura cancelada.</string>
+    <string name="status_enviando">Enviando…</string>
+    <string name="status_url">URL: %1$s</string>
+    <string name="status_erro">Erro: %1$s</string>
+    <string name="erro_sem_foto">Tire uma foto primeiro.</string>
+</resources>
