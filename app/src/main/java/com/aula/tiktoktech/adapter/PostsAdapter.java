@@ -3,7 +3,6 @@ package com.aula.tiktoktech.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,18 +19,7 @@ import java.util.List;
 /** Mostra a lista de posts do feed, um card por foto, carregando a imagem do Cloudinary com Glide. */
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHolder> {
 
-    /** Ações disparadas pelos botões de cada card, delegadas para quem criou o adapter. */
-    public interface Acoes {
-        void votar(Post post, String campo);
-        void comentar(Post post);
-    }
-
     private final List<Post> posts = new ArrayList<>();
-    private final Acoes acoes;
-
-    public PostsAdapter(Acoes acoes) {
-        this.acoes = acoes;
-    }
 
     public void atualizar(List<Post> novosPosts) {
         posts.clear();
@@ -58,9 +46,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         holder.txtLikes.setText(String.valueOf(post.getLikes()));
         holder.txtDislikes.setText(String.valueOf(post.getDislikes()));
         holder.txtComentarios.setText(String.valueOf(post.getComentarios()));
-        holder.btnLike.setOnClickListener(v -> acoes.votar(post, "likes"));
-        holder.btnDislike.setOnClickListener(v -> acoes.votar(post, "dislikes"));
-        holder.btnComentario.setOnClickListener(v -> acoes.comentar(post));
     }
 
     @Override
@@ -74,9 +59,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         final TextView txtLikes;
         final TextView txtDislikes;
         final TextView txtComentarios;
-        final ImageButton btnLike;
-        final ImageButton btnDislike;
-        final ImageButton btnComentario;
 
         PostViewHolder(@NonNull View item) {
             super(item);
@@ -85,9 +67,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             txtLikes = item.findViewById(R.id.txtLikes);
             txtDislikes = item.findViewById(R.id.txtDislikes);
             txtComentarios = item.findViewById(R.id.txtComentarios);
-            btnLike = item.findViewById(R.id.btnLike);
-            btnDislike = item.findViewById(R.id.btnDislike);
-            btnComentario = item.findViewById(R.id.btnComentario);
         }
     }
 }

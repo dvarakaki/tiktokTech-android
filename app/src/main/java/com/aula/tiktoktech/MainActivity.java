@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aula.tiktoktech.adapter.PostsAdapter;
 import com.aula.tiktoktech.model.Post;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
@@ -28,10 +27,9 @@ import com.google.firebase.firestore.Query;
 import java.util.List;
 
 /** Tela do feed: mostra em tempo real os posts que a turma inteira publica no Firestore. */
-public class MainActivity extends AppCompatActivity implements PostsAdapter.Acoes {
-    public static final String EXTRA_POST_ID = "postId";
+public class MainActivity extends AppCompatActivity {
 
-    private final PostsAdapter adapter = new PostsAdapter(this);
+    private final PostsAdapter adapter = new PostsAdapter();
     private ListenerRegistration registroFeed;
     private ProgressBar progress;
     private TextView txtVazio;
@@ -102,27 +100,6 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Acoe
     protected void onStop() {
         if (registroFeed != null) registroFeed.remove();
         super.onStop();
-    }
-
-    @Override
-    public void votar(Post post, String campo) {
-        if (!UsuarioPrefs.estaLogado(this)) {
-            exigirLogin();
-            return;
-        }
-        if (post.getId() == null || !(campo.equals("likes") || campo.equals("dislikes"))) return;
-        // Incremento atômico evita que votos simultâneos sobrescrevam um ao outro.
-        FirebaseFirestore.getInstance().collection("posts").document(post.getId())
-                .update(campo, FieldValue.increment(1))
-                .addOnFailureListener(erro -> Toast.makeText(this,
-                        getString(R.string.msg_erro_voto, erro.getMessage()), Toast.LENGTH_LONG).show());
-    }
-
-    @Override
-    public void comentar(Post post) {
-        if (post.getId() == null) return;
-        startActivity(new Intent(this, ComentariosActivity.class)
-                .putExtra(EXTRA_POST_ID, post.getId()));
     }
 
     private boolean aoClicarMenu(MenuItem item) {
