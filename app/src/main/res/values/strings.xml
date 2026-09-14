@@ -29,6 +29,7 @@
     <string name="hint_seu_nome">Seu nome</string>
     <string name="hint_comentario">Escreva um comentário…</string>
     <string name="autor_anonimo">Anônimo</string>
+    <string name="msg_login_para_comentar">Entre na tela inicial para escrever um comentário.</string>
 
     <!-- Mensagens -->
     <string name="msg_captura_cancelada">Captura cancelada.</string>
