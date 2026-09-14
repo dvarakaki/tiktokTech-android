@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Tela do feed: mostra em tempo real os posts que a turma inteira publica no Firestore. */
@@ -90,7 +91,17 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     if (snapshot == null) return;
-                    List<Post> posts = snapshot.toObjects(Post.class);
+                    List<Post> posts = new ArrayList<>();
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot doc : snapshot) {
+                        try {
+                            posts.add(doc.toObject(Post.class));
+                        } catch (RuntimeException erroConversao) {
+                            // O Firestore de "posts" é compartilhado com a turma inteira: um
+                            // documento de outro app com um formato diferente não pode derrubar o feed.
+                            Log.e("MainActivity", "Post " + doc.getId() + " ignorado (formato incompatível)",
+                                    erroConversao);
+                        }
+                    }
                     adapter.atualizar(posts);
                     txtVazio.setVisibility(posts.isEmpty() ? View.VISIBLE : View.GONE);
                 });
