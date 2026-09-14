@@ -76,5 +76,4 @@
     <string name="msg_login_obrigatorio">Faça login para publicar ou interagir.</string>
     <string name="msg_boas_vindas">Olá, %1$s!</string>
     <string name="msg_logout">Você voltou ao modo visitante.</string>
-    <string name="acao_continuar_visitante">Continuar como visitante</string>
 </resources>

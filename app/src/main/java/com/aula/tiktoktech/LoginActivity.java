@@ -37,10 +37,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         findViewById(R.id.btnSalvar).setOnClickListener(v -> entrar());
-        findViewById(R.id.btnVisitante).setOnClickListener(v -> {
-            UsuarioPrefs.sair(this);
-            finish();
-        });
         edtLogin.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 entrar();

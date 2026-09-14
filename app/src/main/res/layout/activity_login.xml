@@ -66,14 +66,5 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
             android:text="@string/acao_salvar" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnVisitante"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/acao_continuar_visitante"
-            android:textAllCaps="false" />
     </LinearLayout>
 </ScrollView>
