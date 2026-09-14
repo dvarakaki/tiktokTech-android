@@ -23,6 +23,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <activity android:name=".SelfActivity" android:exported="false" />
+        <activity android:name=".LoginActivity" android:exported="false" />
         <activity
             android:name=".ComentariosActivity"
             android:exported="false"

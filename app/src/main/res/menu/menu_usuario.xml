@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/acaoUsuario"
+        android:title="@string/acao_entrar"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/acaoSair"
+        android:title="@string/acao_sair"
+        android:visible="false"
+        app:showAsAction="never" />
+
+</menu>

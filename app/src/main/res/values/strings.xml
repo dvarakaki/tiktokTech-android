@@ -29,6 +29,7 @@
     <string name="hint_seu_nome">Seu nome</string>
     <string name="hint_comentario">Escreva um comentário…</string>
     <string name="autor_anonimo">Anônimo</string>
+    <string name="msg_login_para_comentar">Entre na tela inicial para escrever um comentário.</string>
 
     <!-- Mensagens -->
     <string name="msg_captura_cancelada">Captura cancelada.</string>
@@ -61,4 +62,25 @@
     <string name="status_url">URL: %1$s</string>
     <string name="status_erro">Erro: %1$s</string>
     <string name="erro_sem_foto">Tire uma foto primeiro.</string>
+
+    <!-- Login com e-mail (SharedPreferences) -->
+    <string name="acao_entrar">Entrar</string>
+    <string name="acao_trocar_usuario">Trocar usuário</string>
+    <string name="acao_sair">Sair</string>
+    <string name="usuario_identificado">Usuário: %1$s</string>
+    <string name="usuario_visitante">Modo visitante · somente visualização</string>
+    <string name="msg_login_obrigatorio">Faça login para publicar ou interagir.</string>
+    <string name="msg_boas_vindas">Olá, %1$s!</string>
+    <string name="msg_logout">Você voltou ao modo visitante.</string>
+    <string name="login_subtitulo">Entre para publicar fotos e interagir com o feed.</string>
+    <string name="login_sessao_atual">Conectado atualmente como %1$s. Entre com outra conta para trocar.</string>
+    <string name="hint_email">E-mail</string>
+    <string name="hint_senha">Senha</string>
+    <string name="acao_cadastrar">Criar conta</string>
+    <string name="acao_continuar_visitante">Continuar como visitante</string>
+    <string name="msg_email_invalido">Informe um e-mail válido.</string>
+    <string name="msg_senha_curta">A senha deve ter pelo menos 6 caracteres.</string>
+    <string name="msg_conta_inexistente">Conta não encontrada. Use Criar conta.</string>
+    <string name="msg_conta_existente">Este e-mail já está cadastrado. Use Entrar.</string>
+    <string name="msg_senha_incorreta">Senha incorreta.</string>
 </resources>

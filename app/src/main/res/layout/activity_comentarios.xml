@@ -49,7 +49,19 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/txtLoginComentarios"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/superficie"
+        android:padding="18dp"
+        android:text="@string/msg_login_para_comentar"
+        android:textAlignment="center"
+        android:textColor="@color/texto_medio"
+        android:visibility="gone" />
+
     <LinearLayout
+        android:id="@+id/painelNovoComentario"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/fundo_barra_escrita"
