@@ -23,6 +23,7 @@ import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import com.google.android.material.textfield.TextInputEditText;
 import java.io.File;
 import java.io.IOException;
 
@@ -37,6 +38,7 @@ public class SelfActivity extends AppCompatActivity {
     private Button btnEnviar;
     private ProgressBar progress;
     private TextView txtStatus;
+    private TextInputEditText edtLegenda;
     private TikTokApp app;
 
     private final ActivityResultLauncher<Uri> cameraLauncher =
@@ -59,6 +61,11 @@ public class SelfActivity extends AppCompatActivity {
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!UsuarioPrefs.estaLogado(this)) {
+            Toast.makeText(this, R.string.msg_login_obrigatorio, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         app = (TikTokApp) getApplication();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_self);
@@ -74,6 +81,7 @@ public class SelfActivity extends AppCompatActivity {
         btnEnviar = findViewById(R.id.btnEnviar);
         progress = findViewById(R.id.progress);
         txtStatus = findViewById(R.id.txtStatus);
+        edtLegenda = findViewById(R.id.edtLegenda);
         btnTirarFoto.setOnClickListener(v -> tirarFoto());
         btnGaleria.setOnClickListener(v -> abrirGaleria());
         btnEnviar.setOnClickListener(v -> salvarNuvem());
@@ -118,8 +126,15 @@ public class SelfActivity extends AppCompatActivity {
             txtStatus.setText(R.string.erro_sem_foto);
             return;
         }
+        String descricao = edtLegenda.getText() == null ? "" : edtLegenda.getText().toString().trim();
+        if (descricao.isEmpty()) {
+            edtLegenda.setError(getString(R.string.msg_legenda_vazia));
+            edtLegenda.requestFocus();
+            return;
+        }
         // UploadCallback e inicialização ficam na Application para sobreviver à rotação.
-        app.enviar("D");
+        // Depois do Cloudinary, a URL e a legenda são gravadas na coleção posts.
+        app.enviar("D", descricao);
     }
 
     private void tirarFoto() {
@@ -141,6 +156,7 @@ public class SelfActivity extends AppCompatActivity {
         fotoUri = uri;
         app.foto = uri;
         app.url = "";
+        app.publicado = false;
         app.status = getString(R.string.status_foto_ok);
         atualizarTela();
     }
@@ -166,7 +182,8 @@ public class SelfActivity extends AppCompatActivity {
         progress.setVisibility(app.enviando ? View.VISIBLE : View.GONE);
         btnTirarFoto.setEnabled(!app.enviando);
         btnGaleria.setEnabled(!app.enviando);
-        btnEnviar.setEnabled(fotoUri != null && !app.enviando && app.url.isEmpty());
+        btnEnviar.setEnabled(fotoUri != null && !app.enviando && !app.publicado);
+        edtLegenda.setEnabled(!app.enviando && !app.publicado);
         txtStatus.setText(app.url.isEmpty() ? app.status : app.url);
         // autoLink do XML permite abrir a URL; pressione o texto para copiar.
     }

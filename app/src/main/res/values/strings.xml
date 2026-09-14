@@ -23,6 +23,7 @@
     <string name="hint_legenda">Escreva uma legenda…</string>
     <string name="acao_publicar">Publicar</string>
     <string name="acao_cancelar">Cancelar</string>
+    <string name="msg_legenda_vazia">Escreva uma legenda antes de enviar.</string>
 
     <!-- Comentários -->
     <string name="sem_comentarios">Seja o primeiro a comentar.</string>
