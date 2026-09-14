@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-black"
-            android:text="@string/app_name"
+            android:text="@string/titulo_login"
             android:textAlignment="center"
             android:textColor="@color/marinho"
             android:textSize="34sp" />
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="24dp"
-            android:text="@string/login_subtitulo"
+            android:text="@string/login_explicacao"
             android:textAlignment="center"
             android:textColor="@color/texto_medio"
             android:textSize="16sp" />
@@ -43,58 +43,29 @@
             android:visibility="gone" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/campoEmail"
+            android:id="@+id/campoLogin"
             style="@style/Widget.TikTokTech.Campo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_email"
-            app:startIconDrawable="@android:drawable/ic_dialog_email">
+            android:hint="@string/hint_login">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtEmail"
+                android:id="@+id/edtLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="emailAddress"
-                android:imeOptions="actionNext"
-                android:inputType="textEmailAddress"
-                android:maxLines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/campoSenha"
-            style="@style/Widget.TikTokTech.Campo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:hint="@string/hint_senha"
-            app:endIconMode="password_toggle">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtSenha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autofillHints="password"
+                android:autofillHints="username"
                 android:imeOptions="actionDone"
-                android:inputType="textPassword"
+                android:inputType="textPersonName"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEntrar"
+            android:id="@+id/btnSalvar"
             style="@style/Widget.TikTokTech.Botao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
-            android:text="@string/acao_entrar" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCadastrar"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/acao_cadastrar"
-            android:textAllCaps="false" />
+            android:text="@string/acao_salvar" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnVisitante"

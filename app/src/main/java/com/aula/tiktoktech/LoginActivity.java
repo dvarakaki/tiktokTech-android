@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -14,10 +13,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class LoginActivity extends AppCompatActivity {
-    private TextInputLayout campoEmail;
-    private TextInputLayout campoSenha;
-    private TextInputEditText edtEmail;
-    private TextInputEditText edtSenha;
+    private TextInputLayout campoLogin;
+    private TextInputEditText edtLogin;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,24 +26,22 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        campoEmail = findViewById(R.id.campoEmail);
-        campoSenha = findViewById(R.id.campoSenha);
-        edtEmail = findViewById(R.id.edtEmail);
-        edtSenha = findViewById(R.id.edtSenha);
+        campoLogin = findViewById(R.id.campoLogin);
+        edtLogin = findViewById(R.id.edtLogin);
         TextView sessao = findViewById(R.id.txtSessaoAtual);
         String atual = UsuarioPrefs.obter(this);
         if (!atual.isEmpty()) {
             sessao.setVisibility(View.VISIBLE);
-            sessao.setText(getString(R.string.login_sessao_atual, atual));
+            sessao.setText(getString(R.string.usuario_identificado, atual));
+            edtLogin.setText(atual);
         }
 
-        findViewById(R.id.btnEntrar).setOnClickListener(v -> entrar());
-        findViewById(R.id.btnCadastrar).setOnClickListener(v -> cadastrar());
+        findViewById(R.id.btnSalvar).setOnClickListener(v -> entrar());
         findViewById(R.id.btnVisitante).setOnClickListener(v -> {
             UsuarioPrefs.sair(this);
             finish();
         });
-        edtSenha.setOnEditorActionListener((v, actionId, event) -> {
+        edtLogin.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 entrar();
                 return true;
@@ -56,49 +51,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void entrar() {
-        String email = texto(edtEmail);
-        String senha = texto(edtSenha);
-        if (!validar(email, senha)) return;
-        if (!UsuarioPrefs.contaExiste(this, email)) {
-            campoEmail.setError(getString(R.string.msg_conta_inexistente));
+        String login = texto(edtLogin);
+        campoLogin.setError(null);
+        if (login.isEmpty()) {
+            campoLogin.setError(getString(R.string.msg_login_vazio));
             return;
         }
-        if (!UsuarioPrefs.autenticar(this, email, senha)) {
-            campoSenha.setError(getString(R.string.msg_senha_incorreta));
-            edtSenha.requestFocus();
-            return;
-        }
-        concluir(email);
-    }
-
-    private void cadastrar() {
-        String email = texto(edtEmail);
-        String senha = texto(edtSenha);
-        if (!validar(email, senha)) return;
-        if (UsuarioPrefs.contaExiste(this, email)) {
-            campoEmail.setError(getString(R.string.msg_conta_existente));
-            return;
-        }
-        if (UsuarioPrefs.cadastrar(this, email, senha)) concluir(email);
-    }
-
-    private boolean validar(String email, String senha) {
-        campoEmail.setError(null);
-        campoSenha.setError(null);
-        boolean valido = true;
-        if (!UsuarioPrefs.emailValido(email)) {
-            campoEmail.setError(getString(R.string.msg_email_invalido));
-            valido = false;
-        }
-        if (senha.length() < 6) {
-            campoSenha.setError(getString(R.string.msg_senha_curta));
-            valido = false;
-        }
-        return valido;
-    }
-
-    private void concluir(String email) {
-        Toast.makeText(this, getString(R.string.msg_boas_vindas, email.trim()), Toast.LENGTH_SHORT).show();
+        UsuarioPrefs.entrar(this, login);
         setResult(RESULT_OK);
         finish();
     }
