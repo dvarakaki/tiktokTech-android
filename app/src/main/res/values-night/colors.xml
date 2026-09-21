@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Mesmos nomes do tema claro, valores para o modo escuro -->
 <resources>
-    <color name="marinho">#FF010409</color>
-    <color name="marinho_claro">#FF161B22</color>
-    <color name="ambar">#FF58A6FF</color>
-    <color name="ambar_escuro">#FF1F6FEB</color>
-    <color name="coral">#FFFF7B72</color>
-    <color name="verde_github">#FF3FB950</color>
+    <color name="marinho">#FFBF360C</color>
+    <color name="marinho_claro">#FFE65100</color>
+    <color name="ambar">#FFFFA726</color>
+    <color name="ambar_escuro">#FFFB8C00</color>
+    <color name="coral">#FFFF8A65</color>
+    <color name="verde_github">#FFFB8C00</color>
 
     <color name="fundo">#FF0D1117</color>
     <color name="superficie">#FF161B22</color>

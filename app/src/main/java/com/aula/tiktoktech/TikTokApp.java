@@ -4,10 +4,10 @@ import android.app.Application;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import com.aula.tiktoktech.model.Post;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,12 +87,13 @@ public class TikTokApp extends Application {
         Map<String, Object> post = new HashMap<>();
         post.put("url", imagemUrl);
         post.put("descricao", descricao.trim());
+        post.put("autor", UsuarioPrefs.obter(this));
         post.put("likes", 0L);
         post.put("dislikes", 0L);
         post.put("comentarios", 0L);
-        // Timestamp do servidor, não um Long local: é o tipo que o modelo Post espera ao ler o feed.
-        post.put("criadoEm", FieldValue.serverTimestamp());
-        FirebaseFirestore.getInstance().collection("posts").add(post)
+        // Milissegundos (long), como pede o enunciado e como o modelo Post lê; um Timestamp do servidor não converte para long e o post sumia do feed.
+        post.put("criadoEm", System.currentTimeMillis());
+        FirebaseFirestore.getInstance().collection(Post.COLECAO).add(post)
                 .addOnSuccessListener(documento -> main.post(() -> {
                     publicado = true;
                     enviando = false;

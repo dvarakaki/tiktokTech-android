@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.aula.tiktoktech.adapter.CommentAdapter;
 import com.aula.tiktoktech.model.Comentario;
+import com.aula.tiktoktech.model.Post;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.FieldValue;
@@ -77,7 +78,7 @@ public class ComentariosActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        registroComentarios = banco.collection("posts").document(postId).collection("comentarios")
+        registroComentarios = banco.collection(Post.COLECAO).document(postId).collection("comentarios")
                 .orderBy("criadoEm", Query.Direction.ASCENDING)
                 .addSnapshotListener((snapshot, erro) -> {
                     if (erro != null) {
@@ -100,11 +101,11 @@ public class ComentariosActivity extends AppCompatActivity {
     }
 
     private void enviarComentario(String autor, String texto, TextInputEditText edtComentario) {
-        banco.collection("posts").document(postId).collection("comentarios")
+        banco.collection(Post.COLECAO).document(postId).collection("comentarios")
                 .add(new Comentario(autor, texto))
                 .addOnSuccessListener(ref -> {
                     edtComentario.setText("");
-                    banco.collection("posts").document(postId)
+                    banco.collection(Post.COLECAO).document(postId)
                             .update("comentarios", FieldValue.increment(1));
                 })
                 .addOnFailureListener(erro -> Toast.makeText(this,

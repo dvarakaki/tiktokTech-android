@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aula.tiktoktech.adapter.PostsAdapter;
 import com.aula.tiktoktech.model.Post;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -27,6 +29,7 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /** Tela do feed: mostra em tempo real os posts que a turma inteira publica no Firestore. */
 public class MainActivity extends AppCompatActivity implements PostsAdapter.Acoes {
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Acoe
         progress.setVisibility(View.VISIBLE);
         // Ouve o Firestore em tempo real: quando qualquer aluno publica, o feed atualiza sozinho.
         registroFeed = FirebaseFirestore.getInstance()
-                .collection("posts")
+                .collection(Post.COLECAO)
                 .orderBy("criadoEm", Query.Direction.DESCENDING)
                 .addSnapshotListener((snapshot, erro) -> {
                     progress.setVisibility(View.GONE);
@@ -122,11 +125,25 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Acoe
             return;
         }
         if (post.getId() == null || !(campo.equals("likes") || campo.equals("dislikes"))) return;
-        // Incremento atômico evita que votos simultâneos sobrescrevam um ao outro.
-        FirebaseFirestore.getInstance().collection("posts").document(post.getId())
-                .update(campo, FieldValue.increment(1))
-                .addOnFailureListener(erro -> Toast.makeText(this,
-                        getString(R.string.msg_erro_voto, erro.getMessage()), Toast.LENGTH_LONG).show());
+        String usuario = UsuarioPrefs.obter(this);
+        DocumentReference ref = FirebaseFirestore.getInstance().collection(Post.COLECAO).document(post.getId());
+        // Transação: cada usuário tem no máximo 1 voto. Clicar no mesmo botão remove o voto,
+        // clicar no outro troca o voto; o contador acompanha de forma atômica.
+        FirebaseFirestore.getInstance().runTransaction(transacao -> {
+            Object votos = transacao.get(ref).get("votos");
+            Object atual = votos instanceof Map ? ((Map<?, ?>) votos).get(usuario) : null;
+            FieldPath meuVoto = FieldPath.of("votos", usuario);
+            if (campo.equals(atual)) {
+                transacao.update(ref, meuVoto, FieldValue.delete(), campo, FieldValue.increment(-1));
+            } else if (atual == null) {
+                transacao.update(ref, meuVoto, campo, campo, FieldValue.increment(1));
+            } else {
+                transacao.update(ref, meuVoto, campo, campo, FieldValue.increment(1),
+                        atual.toString(), FieldValue.increment(-1));
+            }
+            return null;
+        }).addOnFailureListener(erro -> Toast.makeText(this,
+                getString(R.string.msg_erro_voto, erro.getMessage()), Toast.LENGTH_LONG).show());
     }
 
     @Override

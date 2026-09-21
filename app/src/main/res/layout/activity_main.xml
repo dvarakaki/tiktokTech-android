@@ -72,6 +72,6 @@
         app:backgroundTint="@color/ambar"
         app:borderWidth="0dp"
         app:elevation="6dp"
-        app:tint="@color/marinho" />
+        app:tint="@color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

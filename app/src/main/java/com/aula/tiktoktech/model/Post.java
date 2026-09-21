@@ -1,20 +1,28 @@
 package com.aula.tiktoktech.model;
 
 import com.google.firebase.firestore.DocumentId;
-import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Post {
+
+    /** Coleção do Firestore usada por este feed (turma 2D). */
+    public static final String COLECAO = "POSTS_2D";
 
     @DocumentId
     private String id;
     private String url;
     private String descricao;
+    private String autor;
     private long likes;
     private long dislikes;
     private long comentarios;
 
-    @ServerTimestamp
     private long criadoEm;
+
+    /** Quem já votou: login -> "likes" ou "dislikes". Cada usuário só pode votar uma vez. */
+    private Map<String, String> votos = new HashMap<>();
 
 
     public Post() {
@@ -44,6 +52,22 @@ public class Post {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public void setAutor(String autor) {
+        this.autor = autor;
+    }
+
+    public Map<String, String> getVotos() {
+        return votos;
+    }
+
+    public void setVotos(Map<String, String> votos) {
+        this.votos = votos == null ? new HashMap<>() : votos;
     }
 
     public String getDescricao() {

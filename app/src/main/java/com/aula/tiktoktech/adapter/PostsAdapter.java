@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aula.tiktoktech.R;
+import com.aula.tiktoktech.UsuarioPrefs;
 import com.aula.tiktoktech.model.Post;
 import com.bumptech.glide.Glide;
 
@@ -55,6 +56,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
                 .centerCrop()
                 .into(holder.imgFoto);
         holder.txtDescricao.setText(post.getDescricao());
+        String autor = post.getAutor();
+        holder.txtAutor.setText(autor == null || autor.trim().isEmpty() ? ""
+                : holder.itemView.getContext().getString(R.string.rotulo_autor, autor));
+        holder.txtAutor.setVisibility(holder.txtAutor.getText().length() == 0 ? View.GONE : View.VISIBLE);
+        String meuVoto = post.getVotos().get(UsuarioPrefs.obter(holder.itemView.getContext()));
+        holder.btnLike.setImageResource("likes".equals(meuVoto) ? R.drawable.ic_coracao : R.drawable.ic_coracao_contorno);
+        holder.btnDislike.setAlpha(meuVoto == null || "dislikes".equals(meuVoto) ? 1f : 0.5f);
+        holder.btnLike.setAlpha(meuVoto == null || "likes".equals(meuVoto) ? 1f : 0.5f);
         holder.txtLikes.setText(String.valueOf(post.getLikes()));
         holder.txtDislikes.setText(String.valueOf(post.getDislikes()));
         holder.txtComentarios.setText(String.valueOf(post.getComentarios()));
@@ -71,6 +80,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
     static class PostViewHolder extends RecyclerView.ViewHolder {
         final ImageView imgFoto;
         final TextView txtDescricao;
+        final TextView txtAutor;
         final TextView txtLikes;
         final TextView txtDislikes;
         final TextView txtComentarios;
@@ -82,6 +92,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
             super(item);
             imgFoto = item.findViewById(R.id.imgFoto);
             txtDescricao = item.findViewById(R.id.txtDescricao);
+            txtAutor = item.findViewById(R.id.txtAutor);
             txtLikes = item.findViewById(R.id.txtLikes);
             txtDislikes = item.findViewById(R.id.txtDislikes);
             txtComentarios = item.findViewById(R.id.txtComentarios);
