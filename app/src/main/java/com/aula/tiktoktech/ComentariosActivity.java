@@ -25,7 +25,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /** Lista e permite escrever comentários de um post, exigindo login para publicar. */
 public class ComentariosActivity extends AppCompatActivity implements CommentAdapter.Acoes {
@@ -56,8 +60,9 @@ public class ComentariosActivity extends AppCompatActivity implements CommentAda
         ((MaterialToolbar) findViewById(R.id.toolbarComentarios))
                 .setNavigationOnClickListener(v -> finish());
 
-        boolean souDonoDoPost = postAutor != null && postAutor.equals(UsuarioPrefs.obter(this));
-        adapter = new CommentAdapter(this, souDonoDoPost);
+        String usuarioAtual = UsuarioPrefs.obter(this);
+        boolean souDonoDoPost = postAutor != null && !postAutor.isEmpty() && postAutor.equals(usuarioAtual);
+        adapter = new CommentAdapter(this, souDonoDoPost, usuarioAtual);
         RecyclerView recyclerComentarios = findViewById(R.id.recyclerComentarios);
         recyclerComentarios.setLayoutManager(new LinearLayoutManager(this));
         recyclerComentarios.setAdapter(adapter);
@@ -113,9 +118,45 @@ public class ComentariosActivity extends AppCompatActivity implements CommentAda
                         }
                     }
                     comentariosAtuais = comentarios;
-                    adapter.atualizar(comentarios);
+                    adapter.atualizar(organizarPorNivel(comentarios));
                     txtVazioComentarios.setVisibility(comentarios.isEmpty() ? View.VISIBLE : View.GONE);
                 });
+    }
+
+    /** Ordena por hierarquia (comentário, depois suas respostas) e marca o nível de cada um para indentação. */
+    private List<Comentario> organizarPorNivel(List<Comentario> lista) {
+        Set<String> idsExistentes = new HashSet<>();
+        for (Comentario c : lista) {
+            if (c.getId() != null) idsExistentes.add(c.getId());
+        }
+        Map<String, List<Comentario>> filhosPorPai = new LinkedHashMap<>();
+        List<Comentario> raizes = new ArrayList<>();
+        for (Comentario c : lista) {
+            String pai = c.getRespondendoA();
+            // Se o pai foi excluído, a resposta órfã volta a aparecer como comentário de nível 0.
+            if (pai == null || !idsExistentes.contains(pai)) {
+                raizes.add(c);
+            } else {
+                filhosPorPai.computeIfAbsent(pai, k -> new ArrayList<>()).add(c);
+            }
+        }
+        List<Comentario> resultado = new ArrayList<>();
+        for (Comentario raiz : raizes) {
+            adicionarComFilhos(raiz, 0, filhosPorPai, resultado);
+        }
+        return resultado;
+    }
+
+    private void adicionarComFilhos(Comentario c, int nivel, Map<String, List<Comentario>> filhosPorPai,
+                                     List<Comentario> resultado) {
+        c.setNivel(nivel);
+        resultado.add(c);
+        List<Comentario> filhos = filhosPorPai.get(c.getId());
+        if (filhos != null) {
+            for (Comentario filho : filhos) {
+                adicionarComFilhos(filho, nivel + 1, filhosPorPai, resultado);
+            }
+        }
     }
 
     @Override
@@ -156,23 +197,22 @@ public class ComentariosActivity extends AppCompatActivity implements CommentAda
                 .setMessage("Isso também apagará as respostas.")
                 .setNegativeButton("Cancelar", null)
                 .setPositiveButton("Excluir", (d, w) -> {
-                    banco.runTransaction(t -> {
-                        DocumentReference post = banco.collection(Post.COLECAO).document(postId);
-                        int total = 1;
-                        for (Comentario c : comentariosAtuais) {
-                            if (comentario.getId().equals(c.getRespondendoA())) total++;
+                    DocumentReference post = banco.collection(Post.COLECAO).document(postId);
+                    int totalDeletes = 1;
+                    WriteBatch lote = banco.batch();
+                    lote.delete(post.collection("comentarios").document(comentario.getId()));
+                    for (Comentario c : comentariosAtuais) {
+                        if (comentario.getId().equals(c.getRespondendoA())) {
+                            lote.delete(post.collection("comentarios").document(c.getId()));
+                            totalDeletes++;
                         }
-                        WriteBatch lote = banco.batch();
-                        lote.delete(post.collection("comentarios").document(comentario.getId()));
-                        for (Comentario c : comentariosAtuais) {
-                            if (comentario.getId().equals(c.getRespondendoA())) {
-                                lote.delete(post.collection("comentarios").document(c.getId()));
-                            }
-                        }
-                        lote.update(post, "comentarios", FieldValue.increment(-total));
-                        return lote.commit();
-                    }).addOnFailureListener(e -> Toast.makeText(this,
-                            "Erro ao excluir: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                    }
+                    lote.update(post, "comentarios", FieldValue.increment(-totalDeletes));
+                    lote.commit().addOnFailureListener(e -> {
+                        Log.e("ComentariosActivity", "Erro ao excluir comentário", e);
+                        Toast.makeText(ComentariosActivity.this,
+                                "Erro ao excluir: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
                 }).show();
     }
 }

@@ -1,6 +1,7 @@
 package com.aula.tiktoktech.model;
 
 import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
@@ -11,6 +12,8 @@ public class Comentario {
     private String autor;
     private String texto;
     private String respondendoA;
+    /** Não vai pro Firestore: calculado no app pra indentar visualmente a resposta. */
+    private int nivel;
     /** Tipo Date (Timestamp no Firestore); nulo ao gravar, o servidor preenche com a hora dele. */
     @ServerTimestamp
     private Date criadoEm;
@@ -68,6 +71,15 @@ public class Comentario {
 
     public void setRespondendoA(String respondendoA) {
         this.respondendoA = respondendoA;
+    }
+
+    @Exclude
+    public int getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(int nivel) {
+        this.nivel = nivel;
     }
 
 }

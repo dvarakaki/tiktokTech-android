@@ -32,10 +32,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.Comentar
     private final List<Comentario> comentarios = new ArrayList<>();
     private final Acoes acoes;
     private final boolean souDonoDoPost;
+    private final String usuarioAtual;
 
-    public CommentAdapter(Acoes acoes, boolean souDonoDoPost) {
+    public CommentAdapter(Acoes acoes, boolean souDonoDoPost, String usuarioAtual) {
         this.acoes = acoes;
         this.souDonoDoPost = souDonoDoPost;
+        this.usuarioAtual = usuarioAtual;
     }
 
     public void atualizar(List<Comentario> novosComentarios) {
@@ -51,17 +53,32 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.Comentar
         return new ComentarioViewHolder(item);
     }
 
+    private static final int NIVEL_MAXIMO_VISUAL = 3;
+    private static final int INDENTACAO_BASE_DP = 12;
+    private static final int INDENTACAO_POR_NIVEL_DP = 22;
+
     @Override
     public void onBindViewHolder(@NonNull ComentarioViewHolder holder, int position) {
         Comentario comentario = comentarios.get(position);
-        String prefixo = comentario.getRespondendoA() != null ? "↳ " : "";
+        int nivel = comentario.getNivel();
+        String prefixo = nivel > 0 ? "↳ " : "";
         holder.txtAutor.setText(prefixo + comentario.getAutor());
         holder.txtTexto.setText(comentario.getTexto());
         Date criadoEm = comentario.getCriadoEm();
         holder.txtData.setText(criadoEm == null ? "" : FORMATO_DATA.format(criadoEm));
         holder.btnResponder.setOnClickListener(v -> acoes.responder(comentario));
-        holder.btnExcluir.setVisibility(souDonoDoPost ? View.VISIBLE : View.GONE);
+        boolean souAutorDoComentario = usuarioAtual != null && usuarioAtual.equals(comentario.getAutor());
+        holder.btnExcluir.setVisibility(souDonoDoPost || souAutorDoComentario ? View.VISIBLE : View.GONE);
         holder.btnExcluir.setOnClickListener(v -> acoes.excluir(comentario));
+
+        // Indenta visualmente cada nível de resposta, limitando pra não sumir com a tela em telas pequenas.
+        int nivelVisual = Math.min(nivel, NIVEL_MAXIMO_VISUAL);
+        float densidade = holder.itemView.getResources().getDisplayMetrics().density;
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams();
+        if (params != null) {
+            params.leftMargin = (int) ((INDENTACAO_BASE_DP + INDENTACAO_POR_NIVEL_DP * nivelVisual) * densidade);
+            holder.itemView.setLayoutParams(params);
+        }
     }
 
     @Override
