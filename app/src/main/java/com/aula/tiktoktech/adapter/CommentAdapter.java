@@ -43,7 +43,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.Comentar
         Comentario comentario = comentarios.get(position);
         holder.txtAutor.setText(comentario.getAutor());
         holder.txtTexto.setText(comentario.getTexto());
-        holder.txtData.setText(FORMATO_DATA.format(new Date(comentario.getCriadoEm())));
+        Date criadoEm = comentario.getCriadoEm();
+        holder.txtData.setText(criadoEm == null ? "" : FORMATO_DATA.format(criadoEm));
     }
 
     @Override

@@ -28,6 +28,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Acoe
                     List<Post> posts = new ArrayList<>();
                     for (com.google.firebase.firestore.QueryDocumentSnapshot doc : snapshot) {
                         try {
-                            posts.add(doc.toObject(Post.class));
+                            posts.add(Post.de(doc));
                         } catch (RuntimeException erroConversao) {
                             // O Firestore de "posts" é compartilhado com a turma inteira: um
                             // documento de outro app com um formato diferente não pode derrubar o feed.
@@ -107,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Acoe
                                     erroConversao);
                         }
                     }
+                    // criadoEm pode vir como número ou Timestamp; o servidor não ordena os dois juntos.
+                    Collections.sort(posts, (a, b) -> Long.compare(b.getCriadoEm(), a.getCriadoEm()));
                     adapter.atualizar(posts);
                     txtVazio.setVisibility(posts.isEmpty() ? View.VISIBLE : View.GONE);
                 });

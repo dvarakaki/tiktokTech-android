@@ -1,8 +1,12 @@
 package com.aula.tiktoktech.model;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Post {
@@ -26,6 +30,49 @@ public class Post {
 
 
     public Post() {
+    }
+
+    /**
+     * Lê um documento do feed da turma tolerando formatos diferentes: o firestore é compartilhado e
+     * outros apps gravam criadoEm como Timestamp (ou em criadoEmMillis), "usuario" no lugar de
+     * "autor" e listas likesPor/dislikesPor no lugar dos contadores.
+     */
+    public static Post de(DocumentSnapshot doc) {
+        Post post = new Post();
+        post.id = doc.getId();
+        post.url = doc.getString("url");
+        post.descricao = doc.getString("descricao");
+        String autor = doc.getString("autor");
+        post.autor = autor != null && !autor.trim().isEmpty() ? autor : doc.getString("usuario");
+        post.likes = contador(doc, "likes", "likesPor");
+        post.dislikes = contador(doc, "dislikes", "dislikesPor");
+        post.comentarios = numero(doc.get("comentarios"));
+        post.criadoEm = milissegundos(doc.get("criadoEm"), doc.get("criadoEmMillis"));
+        Object votos = doc.get("votos");
+        if (votos instanceof Map) {
+            for (Map.Entry<?, ?> voto : ((Map<?, ?>) votos).entrySet()) {
+                post.votos.put(String.valueOf(voto.getKey()), String.valueOf(voto.getValue()));
+            }
+        }
+        return post;
+    }
+
+    private static long numero(Object valor) {
+        return valor instanceof Number ? ((Number) valor).longValue() : 0;
+    }
+
+    private static long contador(DocumentSnapshot doc, String campo, String campoLista) {
+        Object valor = doc.get(campo);
+        if (valor instanceof Number) return ((Number) valor).longValue();
+        Object lista = doc.get(campoLista);
+        return lista instanceof List ? ((List<?>) lista).size() : 0;
+    }
+
+    private static long milissegundos(Object criadoEm, Object criadoEmMillis) {
+        if (criadoEm instanceof Timestamp) return ((Timestamp) criadoEm).toDate().getTime();
+        if (criadoEm instanceof Date) return ((Date) criadoEm).getTime();
+        if (criadoEm instanceof Number) return ((Number) criadoEm).longValue();
+        return numero(criadoEmMillis);
     }
 
     public Post(String url, String descricao) {

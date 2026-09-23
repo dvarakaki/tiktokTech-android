@@ -1,6 +1,7 @@
 package com.aula.tiktoktech;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,11 +14,16 @@ import com.aula.tiktoktech.model.Comentario;
 import com.aula.tiktoktech.model.Post;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot.ServerTimestampBehavior;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Lista e permite escrever comentários de um post, exigindo login para publicar. */
@@ -86,9 +92,18 @@ public class ComentariosActivity extends AppCompatActivity {
                                 Toast.LENGTH_LONG).show();
                         return;
                     }
-                    List<Comentario> comentarios = snapshot == null
-                            ? java.util.Collections.emptyList()
-                            : snapshot.toObjects(Comentario.class);
+                    List<Comentario> comentarios = new ArrayList<>();
+                    if (snapshot != null) {
+                        for (QueryDocumentSnapshot doc : snapshot) {
+                            try {
+                                // ESTIMATE: um comentário recém-enviado ainda sem hora do servidor já aparece com a hora local.
+                                comentarios.add(doc.toObject(Comentario.class, ServerTimestampBehavior.ESTIMATE));
+                            } catch (RuntimeException erroConversao) {
+                                // Um comentário em formato antigo (criadoEm numérico) não pode esconder os demais.
+                                Log.e("ComentariosActivity", "Comentário " + doc.getId() + " ignorado", erroConversao);
+                            }
+                        }
+                    }
                     adapter.atualizar(comentarios);
                     txtVazioComentarios.setVisibility(comentarios.isEmpty() ? View.VISIBLE : View.GONE);
                 });
@@ -101,13 +116,13 @@ public class ComentariosActivity extends AppCompatActivity {
     }
 
     private void enviarComentario(String autor, String texto, TextInputEditText edtComentario) {
-        banco.collection(Post.COLECAO).document(postId).collection("comentarios")
-                .add(new Comentario(autor, texto))
-                .addOnSuccessListener(ref -> {
-                    edtComentario.setText("");
-                    banco.collection(Post.COLECAO).document(postId)
-                            .update("comentarios", FieldValue.increment(1));
-                })
+        DocumentReference post = banco.collection(Post.COLECAO).document(postId);
+        // Um lote grava o comentário na subcoleção e soma o contador do post de uma vez só.
+        WriteBatch lote = banco.batch();
+        lote.set(post.collection("comentarios").document(), new Comentario(autor, texto));
+        lote.update(post, "comentarios", FieldValue.increment(1));
+        lote.commit()
+                .addOnSuccessListener(v -> edtComentario.setText(""))
                 .addOnFailureListener(erro -> Toast.makeText(this,
                         getString(R.string.msg_erro_comentario, erro.getMessage()), Toast.LENGTH_LONG).show());
     }
