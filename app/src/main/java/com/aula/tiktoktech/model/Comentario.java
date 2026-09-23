@@ -1,12 +1,16 @@
 package com.aula.tiktoktech.model;
 
+import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
 
 public class Comentario {
+    @DocumentId
+    private String id;
     private String autor;
     private String texto;
+    private String respondendoA;
     /** Tipo Date (Timestamp no Firestore); nulo ao gravar, o servidor preenche com a hora dele. */
     @ServerTimestamp
     private Date criadoEm;
@@ -18,6 +22,12 @@ public class Comentario {
     public Comentario(String autor, String texto) {
         this.autor = autor;
         this.texto = texto;
+    }
+
+    public Comentario(String autor, String texto, String respondendoA) {
+        this.autor = autor;
+        this.texto = texto;
+        this.respondendoA = respondendoA;
     }
 
     public String getAutor() {
@@ -42,6 +52,22 @@ public class Comentario {
 
     public void setCriadoEm(Date criadoEm) {
         this.criadoEm = criadoEm;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getRespondendoA() {
+        return respondendoA;
+    }
+
+    public void setRespondendoA(String respondendoA) {
+        this.respondendoA = respondendoA;
     }
 
 }

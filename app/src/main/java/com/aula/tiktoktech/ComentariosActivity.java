@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,13 +28,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Lista e permite escrever comentários de um post, exigindo login para publicar. */
-public class ComentariosActivity extends AppCompatActivity {
+public class ComentariosActivity extends AppCompatActivity implements CommentAdapter.Acoes {
+    public static final String EXTRA_POST_AUTOR = "postAutor";
 
-    private final CommentAdapter adapter = new CommentAdapter();
+    private CommentAdapter adapter;
     private final FirebaseFirestore banco = FirebaseFirestore.getInstance();
     private ListenerRegistration registroComentarios;
     private String postId;
+    private String postAutor;
     private View txtVazioComentarios;
+    private String comentarioRespondendoId;
+    private List<Comentario> comentariosAtuais = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +46,7 @@ public class ComentariosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comentarios);
 
         postId = getIntent().getStringExtra(MainActivity.EXTRA_POST_ID);
+        postAutor = getIntent().getStringExtra(EXTRA_POST_AUTOR);
         if (postId == null) {
             Toast.makeText(this, R.string.msg_post_invalido, Toast.LENGTH_LONG).show();
             finish();
@@ -50,6 +56,8 @@ public class ComentariosActivity extends AppCompatActivity {
         ((MaterialToolbar) findViewById(R.id.toolbarComentarios))
                 .setNavigationOnClickListener(v -> finish());
 
+        boolean souDonoDoPost = postAutor != null && postAutor.equals(UsuarioPrefs.obter(this));
+        adapter = new CommentAdapter(this, souDonoDoPost);
         RecyclerView recyclerComentarios = findViewById(R.id.recyclerComentarios);
         recyclerComentarios.setLayoutManager(new LinearLayoutManager(this));
         recyclerComentarios.setAdapter(adapter);
@@ -104,6 +112,7 @@ public class ComentariosActivity extends AppCompatActivity {
                             }
                         }
                     }
+                    comentariosAtuais = comentarios;
                     adapter.atualizar(comentarios);
                     txtVazioComentarios.setVisibility(comentarios.isEmpty() ? View.VISIBLE : View.GONE);
                 });
@@ -117,13 +126,53 @@ public class ComentariosActivity extends AppCompatActivity {
 
     private void enviarComentario(String autor, String texto, TextInputEditText edtComentario) {
         DocumentReference post = banco.collection(Post.COLECAO).document(postId);
-        // Um lote grava o comentário na subcoleção e soma o contador do post de uma vez só.
         WriteBatch lote = banco.batch();
-        lote.set(post.collection("comentarios").document(), new Comentario(autor, texto));
+        Comentario comentario = new Comentario(autor, texto, comentarioRespondendoId);
+        lote.set(post.collection("comentarios").document(), comentario);
         lote.update(post, "comentarios", FieldValue.increment(1));
         lote.commit()
-                .addOnSuccessListener(v -> edtComentario.setText(""))
+                .addOnSuccessListener(v -> {
+                    edtComentario.setText("");
+                    comentarioRespondendoId = null;
+                })
                 .addOnFailureListener(erro -> Toast.makeText(this,
                         getString(R.string.msg_erro_comentario, erro.getMessage()), Toast.LENGTH_LONG).show());
+    }
+
+    @Override
+    public void responder(Comentario comentario) {
+        if (!UsuarioPrefs.estaLogado(this)) {
+            Toast.makeText(this, R.string.msg_login_obrigatorio, Toast.LENGTH_LONG).show();
+            return;
+        }
+        comentarioRespondendoId = comentario.getId();
+        Toast.makeText(this, "Respondendo a " + comentario.getAutor(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void excluir(Comentario comentario) {
+        new AlertDialog.Builder(this)
+                .setTitle("Excluir comentário?")
+                .setMessage("Isso também apagará as respostas.")
+                .setNegativeButton("Cancelar", null)
+                .setPositiveButton("Excluir", (d, w) -> {
+                    banco.runTransaction(t -> {
+                        DocumentReference post = banco.collection(Post.COLECAO).document(postId);
+                        int total = 1;
+                        for (Comentario c : comentariosAtuais) {
+                            if (comentario.getId().equals(c.getRespondendoA())) total++;
+                        }
+                        WriteBatch lote = banco.batch();
+                        lote.delete(post.collection("comentarios").document(comentario.getId()));
+                        for (Comentario c : comentariosAtuais) {
+                            if (comentario.getId().equals(c.getRespondendoA())) {
+                                lote.delete(post.collection("comentarios").document(c.getId()));
+                            }
+                        }
+                        lote.update(post, "comentarios", FieldValue.increment(-total));
+                        return lote.commit();
+                    }).addOnFailureListener(e -> Toast.makeText(this,
+                            "Erro ao excluir: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                }).show();
     }
 }

@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="icone_fundo">#FF000000</color>
 
     <!-- Identidade do app (tema laranja) -->
     <color name="marinho">#FFE65100</color>

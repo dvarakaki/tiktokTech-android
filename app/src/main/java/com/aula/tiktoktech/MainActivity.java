@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Acoe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -153,7 +155,8 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.Acoe
     public void comentar(Post post) {
         if (post.getId() == null) return;
         startActivity(new Intent(this, ComentariosActivity.class)
-                .putExtra(EXTRA_POST_ID, post.getId()));
+                .putExtra(EXTRA_POST_ID, post.getId())
+                .putExtra(ComentariosActivity.EXTRA_POST_AUTOR, post.getAutor()));
     }
 
     private boolean aoClicarMenu(MenuItem item) {

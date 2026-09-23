@@ -25,6 +25,13 @@
 
     <style name="Theme.TikTokTech" parent="Base.Theme.TikTokTech" />
 
+    <style name="Theme.TikTokTech.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@mipmap/ic_launcher_foreground</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenBrandingImage">@mipmap/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.TikTokTech</item>
+    </style>
+
     <!-- ===== Estilos reaproveitados nas telas ===== -->
 
     <style name="Texto.Titulo" parent="TextAppearance.Material3.TitleLarge">
